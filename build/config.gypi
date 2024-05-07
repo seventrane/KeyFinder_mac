@@ -412,16 +412,6 @@
     "want_separate_host_toolset": 0,
     "nodedir": "/Users/seven/Library/Caches/node-gyp/22.1.0",
     "python": "/usr/local/opt/python@3.12/bin/python3.12",
-    "standalone_static_library": 1,
-    "global_prefix": "/usr/local",
-    "local_prefix": "/Users/seven/cppjs",
-    "globalconfig": "/usr/local/etc/npmrc",
-    "init_module": "/Users/seven/.npm-init.js",
-    "userconfig": "/Users/seven/.npmrc",
-    "npm_version": "10.7.0",
-    "node_gyp": "/usr/local/lib/node_modules/npm/node_modules/node-gyp/bin/node-gyp.js",
-    "cache": "/Users/seven/.npm",
-    "user_agent": "npm/10.7.0 node/v22.1.0 darwin x64 workspaces/false",
-    "prefix": "/usr/local"
+    "standalone_static_library": 1
   }
 }

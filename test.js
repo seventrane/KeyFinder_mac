@@ -7,7 +7,7 @@ const addon = require('./build/Release/addon');
 
 const app = express();
 
-// Enable CORS for all routes
+// Allow requests from all origins
 app.use(cors());
 
 const storage = multer.diskStorage({
@@ -37,6 +37,21 @@ app.post('/api/upload', upload.array('audioFiles'), (req, res) => {
   res.json({ success: true, results: results });
 });
 
+app.post('/api/uploadFile', upload.single('audioFile'), (req, res) => {
+  // Check if file was uploaded
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded!' });
+  }
+
+  // Get the path of the uploaded file
+  const filePath = req.file.path;
+
+  // Call addon.myFunction with the file path
+  const result = addon.myFunction(filePath);
+
+  // Return the result
+  res.json({ success: true, result: result });
+});
 
 const bodyParser = require('body-parser'); // Import body-parser middleware
 

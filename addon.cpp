@@ -51,8 +51,6 @@ void copyFile(const std::string& sourcePath, const std::string& destinationPath)
     fs::copy_file(sourcePath, destinationPath, fs::copy_options::overwrite_existing);
     std::cout << "File copied successfully" << std::endl;
 
-    // Delete the source file after processing
-    deleteFile(sourcePath);
 }
 
 
@@ -62,6 +60,8 @@ bool fileExists(const std::string& filePath) {
 }
 
 std::string getKeySignature(SNDFILE* file, const SF_INFO& info, const std::string& pathReal) {
+    std::cout << "Starting key signature detection..." << std::endl;
+
     if (!fileExists(pathReal)) {
         std::cerr << "Error: Source file does not exist" << std::endl;
         // You can return an empty string or some other value to indicate an error
@@ -75,13 +75,19 @@ std::string getKeySignature(SNDFILE* file, const SF_INFO& info, const std::strin
         destinationPath.replace(pos, strlen("./uploads"), "pianoSongs");
     }
 
-    std::cout << "Source Path: " << sourcePath << std::endl;
-    std::cout << "Destination Path: " << destinationPath << std::endl;
+   // std::cout << "Source Path: " << sourcePath << std::endl;
+   // std::cout << "Destination Path: " << destinationPath << std::endl;
 
-    // Copy the file to the destination
-    copyFile(sourcePath, destinationPath);
-
-    // Prepare audio stream and close the file
+    
+	/* NOT COPYING THE FILE ANYMORE DOING THINGS SEPARATE SO ONCE THE KEY IS RETURNED TEH FILE IS DELTED 
+	// Copy the file to the destination
+    std::cout << "Copying file..." << std::endl;
+    
+	copyFile(sourcePath, destinationPath);
+    std::cout << "File copied successfully." << std::endl;
+	*/
+    
+	// Prepare audio stream and close the file
     std::vector<float> audioStream(info.frames * info.channels);
     sf_readf_float(file, audioStream.data(), info.frames);
     sf_close(file);
@@ -93,89 +99,98 @@ std::string getKeySignature(SNDFILE* file, const SF_INFO& info, const std::strin
     a.addToSampleCount(audioStream.size());
 
     // Copy audio samples into the AudioData object
+    std::cout << "Preparing audio data..." << std::endl;
     for (size_t i = 0; i < audioStream.size(); i++) {
         a.setSample(i, audioStream[i]);
     }
+    std::cout << "Audio data prepared successfully." << std::endl;
 
     // Run the analysis with KeyFinder
+    std::cout << "Running key signature detection..." << std::endl;
     static KeyFinder::KeyFinder k;
     KeyFinder::key_t key = k.keyOfAudio(a);
+    std::cout << "Key signature detected." << std::endl;
 
     // Convert the key to a string
     std::string keySignature;
     switch (key) {
-        case KeyFinder::A_MAJOR:
-            keySignature = "A major";
-            break;
-        case KeyFinder::A_MINOR:
-            keySignature = "A minor";
-            break;
-        case KeyFinder::B_FLAT_MAJOR:
-            keySignature = "B♭ major";
-            break;
-        case KeyFinder::B_FLAT_MINOR:
-            keySignature = "B♭ minor";
-            break;
-        case KeyFinder::B_MAJOR:
-            keySignature = "B major";
-            break;
-        case KeyFinder::B_MINOR:
-            keySignature = "B minor";
-            break;
-        case KeyFinder::C_MAJOR:
-            keySignature = "C major";
-            break;
-        case KeyFinder::C_MINOR:
-            keySignature = "C minor";
-            break;
-        case KeyFinder::D_FLAT_MAJOR:
-            keySignature = "D♭ major";
-            break;
-        case KeyFinder::D_FLAT_MINOR:
-            keySignature = "D♭ minor";
-            break;
-        case KeyFinder::D_MAJOR:
-            keySignature = "D major";
-            break;
-        case KeyFinder::D_MINOR:
-            keySignature = "D minor";
-            break;
-        case KeyFinder::E_FLAT_MAJOR:
-            keySignature = "E♭ major";
-            break;
-        case KeyFinder::E_FLAT_MINOR:
-            keySignature = "E♭ minor";
-            break;
-        case KeyFinder::E_MAJOR:
-            keySignature = "E major";
-            break;
-        case KeyFinder::E_MINOR:
-            keySignature = "E minor";
-            break;
-        case KeyFinder::F_MAJOR:
-            keySignature = "F major";
-            break;
-        case KeyFinder::F_MINOR:
-            keySignature = "F minor";
-            break;
-        case KeyFinder::G_FLAT_MAJOR:
-            keySignature = "G♭ major";
-            break;
-        case KeyFinder::G_FLAT_MINOR:
-            keySignature = "G♭ minor";
-            break;
-        case KeyFinder::G_MAJOR:
-            keySignature = "G major";
-            break;
-        case KeyFinder::G_MINOR:
-            keySignature = "G minor";
-            break;
-        default:
-            keySignature = "Unknown";
-            break;
-    }
+           case KeyFinder::A_MAJOR:
+               keySignature = "A major";
+               break;
+           case KeyFinder::A_MINOR:
+               keySignature = "A minor";
+               break;
+           case KeyFinder::B_FLAT_MAJOR:
+               keySignature = "B♭ major";
+               break;
+           case KeyFinder::B_FLAT_MINOR:
+               keySignature = "B♭ minor";
+               break;
+           case KeyFinder::B_MAJOR:
+               keySignature = "B major";
+               break;
+           case KeyFinder::B_MINOR:
+               keySignature = "B minor";
+               break;
+           case KeyFinder::C_MAJOR:
+               keySignature = "C major";
+               break;
+           case KeyFinder::C_MINOR:
+               keySignature = "C minor";
+               break;
+           case KeyFinder::D_FLAT_MAJOR:
+               keySignature = "D♭ major";
+               break;
+           case KeyFinder::D_FLAT_MINOR:
+               keySignature = "D♭ minor";
+               break;
+           case KeyFinder::D_MAJOR:
+               keySignature = "D major";
+               break;
+           case KeyFinder::D_MINOR:
+               keySignature = "D minor";
+               break;
+           case KeyFinder::E_FLAT_MAJOR:
+               keySignature = "E♭ major";
+               break;
+           case KeyFinder::E_FLAT_MINOR:
+               keySignature = "E♭ minor";
+               break;
+           case KeyFinder::E_MAJOR:
+               keySignature = "E major";
+               break;
+           case KeyFinder::E_MINOR:
+               keySignature = "E minor";
+               break;
+           case KeyFinder::F_MAJOR:
+               keySignature = "F major";
+               break;
+           case KeyFinder::F_MINOR:
+               keySignature = "F minor";
+               break;
+           case KeyFinder::G_FLAT_MAJOR:
+               keySignature = "G♭ major";
+               break;
+           case KeyFinder::G_FLAT_MINOR:
+               keySignature = "G♭ minor";
+               break;
+           case KeyFinder::G_MAJOR:
+               keySignature = "G major";
+               break;
+           case KeyFinder::G_MINOR:
+               keySignature = "G minor";
+               break;
+           default:
+               keySignature = "Unknown";
+               break;
+       }
 
+    std::cout << "Key signature: " << keySignature << std::endl;
+
+	deleteFile(sourcePath);	
+	std::cout << "File deleted successfully." << std::endl;
     return keySignature;
+	
 }
 
 std::pair<SNDFILE*, SF_INFO> MySecondFunction(const char* filename) {
